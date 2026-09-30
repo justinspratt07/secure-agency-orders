@@ -60,7 +60,7 @@ An order ID alone never grants access. `find`, `list`, and `cancel` bind the act
 
 ## Transaction boundary
 
-Create resolves catalog prices with row locks, then writes the header, line items, and audit in one transaction. Cancel performs the conditional status change and audit insertion in one transaction. Exceptions roll back the transaction. Cancellation uses one conditional update, so repeating it produces no second change or audit event. Audit failure tests exercise real rollback against a database.
+Create resolves catalog prices in a repeatable-read transaction, then writes the header, line items, and audit in one transaction. Cancel performs the conditional status change and audit insertion in one transaction. Exceptions roll back the transaction. Cancellation uses one conditional update, so repeating it produces no second change or audit event. Audit failure tests exercise real rollback against a database.
 
 ## Database choices
 

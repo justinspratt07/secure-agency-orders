@@ -48,16 +48,16 @@ public final class OrderService {
         for (LineRequest line : lines) {
             if (!ids.add(line.productId())) throw new IllegalArgumentException("Duplicate product");
         }
-        // Lock products in a stable order to reduce deadlock risk for overlapping baskets.
-        lines = lines.stream().sorted(Comparator.comparing(LineRequest::productId)).toList();
         try (Connection c = database.connect()) {
+            // Catalog reads share a repeatable snapshot; no catalog write permission is needed.
+            c.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
             c.setAutoCommit(false);
             try {
                 Map<String, BigDecimal> prices = new HashMap<>();
                 BigDecimal total = new BigDecimal("0.00");
                 for (LineRequest line : lines) {
                     try (PreparedStatement ps = c.prepareStatement(
-                            "SELECT unit_price FROM products WHERE product_id = ? FOR UPDATE")) {
+                            "SELECT unit_price FROM products WHERE product_id = ?")) {
                         ps.setString(1, line.productId());
                         try (ResultSet rs = ps.executeQuery()) {
                             if (!rs.next()) throw new IllegalArgumentException("Unknown product");

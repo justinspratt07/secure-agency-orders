@@ -12,7 +12,7 @@ Use these prompts to practice explaining the implementation. They are study prom
 | Why store the unit price on each item? | Historical totals must not change when the catalog price changes. |
 | Why use BigDecimal? | Currency arithmetic needs exact decimals and predictable precision. |
 | Why one transaction? | Header, items and audit must all succeed or all roll back. |
-| Why lock product rows? | Prices remain stable while the basket is priced and written. Stable lock ordering reduces deadlock risk. |
+| Why use repeatable-read isolation? | Catalog reads use a consistent transaction snapshot without giving the application account permission to modify product prices. |
 | Why test both H2 and MySQL? | Compatibility mode does not guarantee identical SQL or transaction behavior. |
 | What does the report mean? | Open-order commitments per product for one agency, not money actually paid. |
 | What remains before public deployment? | Authentication, trusted role/agency resolution, migrations, pagination, operational logging and deployment controls. |

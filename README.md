@@ -72,7 +72,7 @@ flowchart LR
     Queries --> Audit[(Audit events)]
 ```
 
-The application resolves prices from the database and captures them on each order item. Future catalog changes do not rewrite historical commitments. Product rows are locked in a stable order while pricing and writing a basket. A conditional update makes cancellation produce one event even when repeated.
+The application resolves prices from the database and captures them on each order item. Future catalog changes do not rewrite historical commitments. Catalog reads use repeatable-read isolation while pricing and writing a basket. A conditional update makes cancellation produce one event even when repeated.
 
 The spending report joins orders, items and products, filters by agency and OPEN status, then groups by product. It measures **open commitments**, not payments or revenue. Denied and nonexistent order lookups both return an empty result.
 
