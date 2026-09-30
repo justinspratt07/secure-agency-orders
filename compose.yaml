@@ -1,0 +1,53 @@
+name: secure-agency-orders
+services:
+  mysql-test:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: disposable-test-root
+      MYSQL_DATABASE: orders_test
+      MYSQL_USER: orders_test_user
+      MYSQL_PASSWORD: disposable-test-only
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  verify:
+    build: .
+    environment:
+      TEST_DB_URL: jdbc:mysql://mysql-test:3306/orders_test?allowPublicKeyRetrieval=true&sslMode=DISABLED
+      TEST_DB_USER: orders_test_user
+      TEST_DB_PASSWORD: disposable-test-only
+    depends_on:
+      mysql-test:
+        condition: service_healthy
+  mysql-demo:
+    image: mysql:8.4
+    profiles: [demo]
+    environment:
+      MYSQL_ROOT_PASSWORD: disposable-demo-root
+      MYSQL_DATABASE: agency_orders
+    tmpfs:
+      - /var/lib/mysql
+    volumes:
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./src/main/resources/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - ./docker/demo-account.sql:/docker-entrypoint-initdb.d/03-account.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  demo:
+    build: .
+    profiles: [demo]
+    command: ["compile", "exec:java", "-Dexec.args=mysql-demo"]
+    environment:
+      DB_URL: jdbc:mysql://mysql-demo:3306/agency_orders?allowPublicKeyRetrieval=true&sslMode=DISABLED
+      DB_USER: orders_app
+      DB_PASSWORD: disposable-demo-only
+    depends_on:
+      mysql-demo:
+        condition: service_healthy

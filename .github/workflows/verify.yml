@@ -1,0 +1,104 @@
+name: Verify database behavior
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+
+  contents: read
+
+jobs:
+
+  h2:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+
+        with:
+
+          distribution: temurin
+
+          java-version: '21'
+
+          cache: maven
+
+      - run: ./mvnw --batch-mode clean verify
+
+      - run: ./mvnw --batch-mode exec:java
+
+  mysql:
+
+    runs-on: ubuntu-latest
+
+    services:
+
+      mysql:
+
+        image: mysql:8.4
+
+        env:
+
+          MYSQL_ROOT_PASSWORD: ephemeral-ci-root
+
+          MYSQL_DATABASE: orders_test
+
+          MYSQL_USER: orders_test_user
+
+          MYSQL_PASSWORD: ephemeral-ci-only
+
+        ports:
+
+          - 3306:3306
+
+        options: >-
+
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+
+          --health-interval=10s
+
+          --health-timeout=5s
+
+          --health-retries=12
+
+    env:
+
+      TEST_DB_URL: jdbc:mysql://127.0.0.1:3306/orders_test?allowPublicKeyRetrieval=true&sslMode=DISABLED
+
+      TEST_DB_USER: orders_test_user
+
+      TEST_DB_PASSWORD: ephemeral-ci-only
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+
+        with:
+
+          distribution: temurin
+
+          java-version: '21'
+
+          cache: maven
+
+      - run: ./mvnw --batch-mode -Pmysql clean verify
+
+  compose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+      - name: Run MySQL tests through the documented setup
+        run: docker compose up --build --abort-on-container-exit --exit-code-from verify verify
+      - name: Run MySQL demonstration with restricted account
+        run: docker compose --profile demo up --build --abort-on-container-exit --exit-code-from demo demo
+      - name: Clean up disposable containers
+        if: always()
+        run: docker compose --profile demo down
