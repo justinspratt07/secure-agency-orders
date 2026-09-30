@@ -5,71 +5,51 @@ Author: Justin Spratt
 The project separates the command-line demonstration from its order service and connection configuration. SQL remains explicit so reviewers can inspect each authorization predicate and transaction boundary.
 
 ```mermaid
-
 flowchart LR
-
     CLI[Local demo with simulated actor] --> Service[OrderService]
-
     Service --> Validation[Role and input checks]
-
     Validation --> JDBC[Prepared statements]
-
     JDBC --> Orders[(Orders)]
-
     JDBC --> Audit[(Audit events)]
-
 ```
 
 ```mermaid
-
 erDiagram
-
     AGENCIES ||--o{ ORDERS : owns
-
     AGENCIES ||--o{ AUDIT_EVENTS : scopes
-
     ORDERS ||--o{ AUDIT_EVENTS : records
     ORDERS ||--|{ ORDER_ITEMS : contains
     PRODUCTS ||--o{ ORDER_ITEMS : priced_as
-
-    AGENCIES {
-
-        varchar agency_id PK
-
+    PRODUCTS {
+        varchar product_id PK
         varchar name
-
+        decimal unit_price
     }
-
+    ORDER_ITEMS {
+        varchar order_id PK,FK
+        varchar product_id PK,FK
+        int quantity
+        decimal unit_price
+    }
+    AGENCIES {
+        varchar agency_id PK
+        varchar name
+    }
     ORDERS {
-
         varchar order_id PK
-
         varchar agency_id FK
-
         varchar description
-
         decimal total_amount
-
         varchar status
-
     }
-
     AUDIT_EVENTS {
-
         varchar event_id PK
-
         varchar actor_id
-
         varchar agency_id FK
-
         varchar action
-
         varchar order_id FK
-
         timestamp occurred_at
-
     }
-
 ```
 
 ## Trust boundary
