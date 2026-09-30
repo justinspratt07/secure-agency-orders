@@ -14,7 +14,7 @@ Author: Justin Spratt
 
 The container demo used the exact commands documented in the README. It verified a **110.20** total from catalog prices, cancellation, hidden cross-agency orders, rejected injection-shaped IDs, and blocked viewer writes. The application account has SELECT-only access to products.
 
-Local Windows verification also passed the 20-test suite using Java 21.0.10 and Maven 3.9.12. The separate Windows wrapper bootstrap was not executed because the execution approval service was temporarily unavailable. The wrapper was exercised successfully on Linux in GitHub Actions.
+The Windows quick-start was verified on September 29, 2026 using Java 21.0.10 and the included `mvnw.cmd` wrapper. Starting with a separate wrapper cache, it downloaded Maven 3.9.12, passed all 20 tests, packaged the application, and completed the CLI demo. The wrapper is also verified on Linux in GitHub Actions.
 
 ## What testing caught
 
