@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Try Justin Spratt's Secure Agency Orders portfolio: a browser simulation of agency-scoped purchasing, spending reports, and audit records.">
+  <meta name="author" content="Justin Spratt">
+  <title>Secure Agency Orders · Justin Spratt</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <header><div class="brand">Secure Agency Orders <span>by Justin Spratt</span></div><a href="https://github.com/justinspratt07/secure-agency-orders">View source <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a></header>
+  <main>
+    <p class="disclosure"><strong>Interactive simulation</strong> · Runs in your browser, not the Java/MySQL server</p>
+    <div class="intro"><div><h1>Agency workspace</h1><p>Create orders. Explore access controls. Follow the audit trail.</p></div><button id="reset" type="button">Reset demo</button></div>
+    <div class="toolbar">
+      <label class="sr-only" for="agency">Agency</label><select id="agency"><option value="AGENCY-A">Cedar School District</option><option value="AGENCY-B">Maple Public Library</option></select>
+      <label class="sr-only" for="role">Role</label><select id="role"><option value="BUYER">Buyer</option><option value="VIEWER">Viewer</option></select>
+      <p>Switch agencies to see isolated orders.</p>
+    </div>
+    <p id="feedback" role="status" aria-live="polite"></p>
+    <div class="workspace">
+      <div class="records">
+        <section class="panel"><div class="section-heading"><h2>Orders</h2><span id="count"></span></div>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Agency orders"><table><thead><tr><th scope="col">Order</th><th scope="col">Description</th><th scope="col">Total</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Action</span></th></tr></thead><tbody id="orders"></tbody></table></div>
+        </section>
+        <section class="panel"><h2>Open commitments</h2><div id="commitments"></div></section>
+        <section class="panel"><h2>Audit trail</h2><div id="audit"></div></section>
+      </div>
+      <section class="panel create"><h2>Create an order</h2><p id="viewer" hidden>Viewers can read orders. Switch to Buyer to make changes.</p>
+        <form id="create-form"><fieldset id="fields"><legend class="sr-only">Order details</legend>
+          <label for="description">Description</label><input id="description" value="Workshop materials" maxlength="120" required autocomplete="off">
+          <h3>Product quantities</h3>
+          <div class="product"><label for="paint">Classroom paint set<span>$25.10</span></label><input id="paint" type="number" min="0" max="1000" step="1" value="2" required></div>
+          <div class="product"><label for="paper">Workshop paper pack<span>$20.00</span></label><input id="paper" type="number" min="0" max="1000" step="1" value="3" required></div>
+          <div class="total"><span>Total</span><output id="total" aria-live="polite">$110.20</output></div>
+          <button class="primary" type="submit">Create order</button>
+        </fieldset></form>
+      </section>
+    </div>
+    <noscript><p>Enable JavaScript to try this interactive simulation.</p></noscript>
+  </main>
+  <footer>Justin Spratt · Java + SQL portfolio<span>Fictional data. Changes stay in this tab and reset when you reload. Roles are simulated, not real authentication.</span></footer>
+</body>
+</html>

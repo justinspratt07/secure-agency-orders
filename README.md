@@ -8,6 +8,14 @@ A purchasing application that keeps each agency's orders separate, calculates to
 
 Built from my CSS321 Software Assurance coursework as a focused Java and SQL portfolio project. All agencies and sample data are fictional. The local actor is simulated; this project does not implement login or claim production readiness.
 
+## Live browser demo
+
+**[Open the interactive demo](https://justinspratt07.github.io/secure-agency-orders/)** — no installation or account required.
+
+Create and cancel orders, switch between two agencies, try the viewer role, and see open commitments and audit events update. This GitHub Pages frontend uses clearly labeled fictional data and in-memory JavaScript. Changes stay in your tab and disappear on reload. It does **not** connect to Java/MySQL or demonstrate a real authentication boundary; the backend and database verification below are separate.
+
+See [browser demo notes](docs/browser-demo.md) for the walkthrough and scope.
+
 ## What it demonstrates
 
 - **Relational design:** agencies, products, orders, line items and audit events with keys, constraints and an agency index.
